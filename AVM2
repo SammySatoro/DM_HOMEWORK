@@ -1,0 +1,59 @@
+#include "conio.h"
+#include "math.h"
+#include "iostream"
+#include "fstream"
+
+#define SIZE 30
+
+using namespace std;
+
+int main()
+{
+	int i, j, n, size, z;
+	double matrixA[SIZE][SIZE], colB[SIZE], eps[SIZE], X[SIZE], extra[SIZE];
+	ofstream fout ("test.txt");
+
+	cout << "Set the size of the matrix: ";
+	cin >> size;
+
+	cout << "Enter " << size << " strings of " << size << " numbers:" << endl;
+	for (i = 0; i < size; i++)
+		for (j = 0; j < size; j++)
+			cin >> matrixA[i][j];	
+
+	cout << "Enter " << size << " free members:" << endl;
+	for (i = 0; i < size; i++)
+		cin >> colB[i];
+
+	n = size - 1;
+	eps[0] = -matrixA[0][1] / matrixA[0][0];
+	extra[0] = colB[0] / matrixA[0][0];
+
+	for (i = 1; i < n; i++)
+	{
+		z = matrixA[i][i] + matrixA[i][i - 1] * eps[i - 1];
+		eps[i] = -matrixA[i][i + 1] / z;
+		extra[i] = (colB[i] - matrixA[i][i - 1] * extra[i - 1]) / z;
+	}
+
+	X[n] = (colB[n] - matrixA[n][n - 1] * extra[n - 1]) / (matrixA[n][n] + matrixA[n][n - 1] * eps[n - 1]);
+
+	for (i = n - 1; i >= 0; i--)
+		X[i] = eps[i] * X[i + 1] + extra[i];
+
+	fout << "Matrix A:" << endl;
+	for (i = 0; i < size; i++)
+	{
+		for (j = 0; j < size; j++)
+			fout << matrixA[i][j] << "\t ";
+		fout << endl;
+	}
+
+	fout << "Column B:" << endl;
+	for (i = 0; i < size; i++)
+		fout << colB[i] << endl;
+
+	fout << "Matrix X:" << endl;
+	for (i = 0; i < size; i++)
+		fout << "X" << i + 1 << " = " << X[i] << endl;
+}
