@@ -1,10 +1,16 @@
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
 double Func(double x) 
 {
 	return x * x + 2 * x - 15;
+}
+
+double PhiFunc(double x)
+{
+	return (x * x - 15) / -2;
 }
 
 double DoCutInHalfMethod(double (*f)(double), double a, double b, double eps) 
@@ -33,6 +39,15 @@ double DoSecantMethod(double (*f)(double), double a, double b, double eps)
     return c;
 }
 
+double DoSimpleIterationsMethod(double (*f)(double), double x0, double eps, int n)
+{
+	double x = x0, df;
+	df = (f(x + eps) - f(x)) / eps;
+	for (int i = 1; i <= n; i++)
+		x = x - f(x) / df;
+	return x;
+}
+
 int main() 
 {
 	double a, b, eps, x;
@@ -53,4 +68,6 @@ int main()
 	cout << "Cut-in-half method X = " << x << endl;
 	x = DoSecantMethod(Func, a, b, eps);
 	cout << "Secant method X = " << x << endl;
+	x = DoSimpleIterationsMethod(Func, b, eps, 100);
+	cout << "Simple iterations method X = " << x << endl;
 }
