@@ -1,0 +1,409 @@
+1 1 0 22
+10 1 1 3
+0 1 15 2
+
+1 12 0 0 4
+10 1 1 0 2 
+0 1 15 2 6
+0 0 4 10 12
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cmath>
+#include "math.h"
+
+#define SIZE 30
+
+using namespace std;
+
+int CheckSize(string str)
+{
+	int size = 0;
+	for (int i = 0; i < str.size(); i++)
+		if (str[i] != ' ' && str[i + 1] == ' ')
+			size++;
+	return size;
+}
+
+bool TrashFilter(string& str)
+{
+	int minus_f = 0, dot_f;
+	dot_f = 0;
+	str += ' ';
+	if (str[0] == '-')
+		minus_f = 1;
+	for (int i = minus_f; i < str.size() - 1; i++)
+	{
+		if (!(str[i] <= '9' && str[i] >= '0') || dot_f == 2)
+			return false;
+		if (str[i + 1] == ',' || str[i + 1] == '.')
+		{
+			if (str[i + 1] == ',')
+				str[i + 1] = '.';
+			i++;
+			dot_f++;
+		}
+	}
+	return true;
+	//////////////////////////
+}
+
+double** CreateMatrix(int size)
+{
+	ifstream finTest("test.txt");
+	if (!finTest.is_open())
+	{
+		cout << "Failed to open file!\n";
+	}
+	else
+	{
+		cout << "Test file successfully opened for reading!\n";
+
+		string num;
+		double** matrix = new double* [size - 1];
+		for (int i = 0; i < size; i++)
+		{
+			matrix[i] = new double[size];
+			for (int j = 0; j <= size; j++)
+				matrix[i][j] = 0;			
+		}
+		for (int i = 0; i < size; i++)
+		{			
+			for (int j = 0; j <= size; j++)
+			{
+				finTest >> num;
+				
+				if (TrashFilter(num))
+				{
+					matrix[i][j] = stod(num);
+					num = "";
+				}
+				else
+				{
+					cout << "\nFile is filled up incorrectly!";
+					cout << "\n!!! The expression may contain only: \"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\" !!!\n\n";
+					break;
+				}
+
+			}
+		}
+		finTest.close();
+		return matrix;
+	}
+}
+void PrintMatrix(double** mat, int size)
+{
+	cout << "\nThe Matrix: \n";
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j <= size; j++)
+		{
+			cout << mat[i][j] << "\t";
+		}
+		cout << "\n";
+	}
+}
+
+void CheckZeroStrB(double** mat, int size, int& key)
+{
+	int zero_count;
+	for (int i = 0; i < size; i++)
+	{
+		zero_count = 0;
+		for (int j = 0; j < size; j++)
+		{
+			if (mat[i][j] != 0)
+				continue;
+			else
+				zero_count++;
+		}
+		if (zero_count == size && mat[i][size] != 0)
+		{
+			key = 1;
+			break;
+		}
+	}
+}
+
+void CheckZeroStr(double** mat, int size, int& key)
+{
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j <= size; j++)
+		{
+			if (std::isnormal(mat[i][j]))
+			{
+				break;
+			}
+			if (j == size)
+			{
+				key = 2;
+				return;
+			}
+		}
+	}
+}
+
+bool FindNotZero(double** mat, int size, int I)
+{
+	for (int i = I; i < size; i++)
+	{
+		if (mat[i][I] != 0)
+		{
+			for (int j = 0; j <= size; j++)
+			{
+				mat[I][j] += mat[i][j];
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+int FindFreeCount(double** mat, int size, bool* dep)
+{
+	int count = 0;
+	bool flag = false;
+	double ex;
+	for (int i = 0; i < size - 1; i++)
+	{
+		flag = false;
+		for (int j = i + 1; j < size; j++)
+		{
+			ex = mat[i][0] / mat[j][0];
+			for (int k = 1; k < size; k++)
+			{
+				if ((mat[i][k] / mat[j][k] != ex) && !(!std::isnormal(mat[i][k] / mat[j][k]) && !std::isnormal(ex)))
+					flag = true;
+				ex = mat[i][k] / mat[j][k];
+			}
+			if (!flag)
+			{
+				dep[i] = true;
+				dep[j] = true;
+			}
+		}
+	}
+	for (int i = 0; i < size; i++)
+		if (dep[i] == true)
+			count++;
+	return count - 1;
+}
+
+void FindPrintFSS(double** mat, double* X, int size, int& freeCount, ofstream& file)
+{
+	bool* dep = new bool[size];
+	freeCount = FindFreeCount(mat, size, dep);
+	X[size - 1] = 1;
+	for (int i = size - 2; i >= size - freeCount; i--)
+		X[i] = 0;
+
+	for (int i = size - freeCount - 1; i >= 0; i--)
+	{
+		X[i] = mat[i][size];
+		for (int j = i + 1; j < size; j++)
+			X[i] -= mat[i][j] * X[j];
+	}
+	if (!std::isnormal(X[0]))
+		X[0] = 0;
+	for (int i = 0; i < size; i++)
+	{
+		file << fixed;
+		file.precision(3);
+		file << "X" << i + 1 << " = " << X[i] << endl;
+	}
+}
+
+void Gauss(double** mat, double* X, int size, int& key, int& ind)
+{
+	double extra;
+	int k, i, j;
+	PrintMatrix(mat, size);
+	if (size == 1)
+	{
+		CheckZeroStrB(mat, size, key);
+		if (key != 1)
+			key = 3;
+
+	}
+	for (i = 0; i < size - 1; i++)
+	{
+
+		CheckZeroStrB(mat, size, key);
+		if (key == 1)
+		{
+			break;
+		}
+		extra = mat[i][i];
+		if (extra == 0)
+		{
+			FindNotZero(mat, size, i);
+			extra = mat[i][i];
+		}
+		for (j = 0; j <= size; j++)
+		{
+			mat[i][j] /= extra;
+		}
+		for (j = i + 1; j < size; j++)
+		{
+			extra = mat[j][i];
+			for (k = 0; k <= size; k++)
+			{
+				mat[j][k] -= extra * mat[i][k];
+			}
+		}
+	}
+
+	CheckZeroStr(mat, size, key);
+	CheckZeroStrB(mat, size, key);
+
+	if (key != 1 || key != 2)
+	{
+		X[size - 1] = mat[size - 1][size] / mat[size - 1][size - 1];
+		for (i = size - 2; i >= 0; i--)
+		{
+			X[i] = mat[i][size];
+			for (j = i + 1; j < size; j++)
+				X[i] -= mat[i][j] * X[j];
+		}
+	}
+}
+
+void PrintAnswer(double** mat, double* x, int size, int key)
+{
+	ofstream foutTest("test.txt", ofstream::app);
+	if (!foutTest.is_open())
+	{
+		cout << "Failed to open file!\n";
+	}
+	else
+	{
+		cout << "Test file successfully opened for writing!\n";
+		if (key == 0)
+		{
+			foutTest << "\nThe system has only one solution: \n";
+			for (int i = 0; i < size; i++)
+			{
+				foutTest << fixed;
+				foutTest.precision(3);
+				foutTest << "X" << i + 1 << " = " << x[i] << endl;
+			}
+		}
+		else if (key == 1)
+		{
+			foutTest << "\nThe system has no solutions!\n";
+		}
+		else if (key == 3)
+		{
+			foutTest << "\nThe system has only one solution: \n";
+			foutTest << fixed;
+			foutTest.precision(3);
+			foutTest << "X" << 1 << " = " << mat[0][1] / mat[0][0] << endl;
+		}
+		else if (key == 2)
+		{
+			int freeCount = 0;
+			foutTest << "\nThe system has an infinite number of solutions.\n";
+			foutTest << "Find a fundamental set of solutions: \n";
+			if (mat[0][0] == 0 && mat[0][1] == 0 && size == 1)
+				cout << "X" << 1 << " = " << 1 << endl;
+			FindPrintFSS(mat, x, size, freeCount, foutTest);
+		}
+	}
+	foutTest.close();
+}
+
+bool IsExists(const char* fileName)
+{
+	ifstream infile(fileName);
+	return infile.good();
+}
+
+void TridiagonalMatrixMethod(int size)
+{
+	int i, j, n, z;
+	n = size - 1;
+	double matrixA[SIZE][SIZE], colB[SIZE], eps[SIZE], X[SIZE], extra[SIZE];
+	ofstream fout("test.txt", ofstream::app);
+	
+	double** matrix = CreateMatrix(size);
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			matrixA[i][j] = matrix[i][j];
+		}
+		colB[i] = matrix[i][size];
+	}
+
+	eps[0] = -matrixA[0][1] / matrixA[0][0];
+	extra[0] = colB[0] / matrixA[0][0];
+
+	for (i = 1; i < n; i++)
+	{		
+		z = matrixA[i][i] + matrixA[i][i - 1] * eps[i - 1];
+		eps[i] = -matrixA[i][i + 1] / z;
+		extra[i] = (colB[i] - matrixA[i][i - 1] * extra[i - 1]) / z;
+	}
+
+	X[n] = (colB[n] - matrixA[n][n - 1] * extra[n - 1]) / (matrixA[n][n] + matrixA[n][n - 1] * eps[n - 1]);
+
+	for (i = n - 1; i >= 0; i--)
+	{
+		X[i] = eps[i] * X[i + 1] + extra[i];
+		
+	}
+
+	fout << "Matrix A:" << endl;
+	for (i = 0; i < size; i++)
+	{
+		for (j = 0; j < size; j++)
+			fout << matrixA[i][j] << "\t ";
+		fout << colB[i] << "\t ";
+		fout << endl;
+	}
+	fout << "Matrix X:" << endl;
+	for (i = 0; i < size; i++)
+		fout << "X" << i + 1 << " = " << X[i] << endl;
+}
+
+int main()
+{
+	int key = 0, ind = 0;
+	ifstream finTest("test.txt");
+	if (!finTest.is_open())
+	{
+		cout << "Failed to open file!\n";
+	}
+	else
+	{
+		cout << "Test file successfully opened for reading!\n";
+		int n;
+		string line;
+		getline(finTest, line);
+		n = CheckSize(line);
+		finTest.seekg(0);
+		cout << "Choose the method: \"G\" or \"T\": ";
+		char method;
+		cin >> method;
+		if (method == 'G')
+		{
+			double** matrix = CreateMatrix(n);
+			cout << "\n----------------\n";
+			double* X = new double[n - 1];
+			Gauss(matrix, X, n, key, ind);
+			PrintAnswer(matrix, X, n, key);
+		}
+		else if (method == 'T')
+		{
+			TridiagonalMatrixMethod(n);
+		}
+		else
+		{
+			cout << "Symbol is incorrect!" << endl;
+		}
+	}
+	finTest.close();
+}
