@@ -1,0 +1,303 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace ConsoleApp1
+{    
+    public abstract class Student
+    {
+        public string _secondName { get; set; }
+        public string _firstName { get; set; }
+        public string _year { get; set; }
+        public int _id { get; set; }
+
+        public abstract void SetSecondName(string value);
+        public abstract void SetFirstName(string value);
+        public abstract void SetYear(string value);
+        public abstract void SetID(int value);
+    }
+
+    public class StudentTeacher : Student, ICloneable, IComparable, IComparer
+    {
+        public string _practiceType { get; set; }
+        public string _companyName { get; set; }
+
+        public void SetPracticeType(string value)
+        {
+            _practiceType = value;
+        }
+        public void SetCompanyName(string value)
+        {
+            _companyName = value;
+        }
+        public override void SetSecondName(string value)
+        {
+            _secondName = value;
+        }
+        public override void SetFirstName(string value)
+        {
+            _firstName = value;
+        }
+        public override void SetYear(string value)
+        {
+            _year = value;
+        }
+        public override void SetID(int value)
+        {
+            _id = value;
+        }
+     
+        public string GetSecondName
+        {
+            get { return _secondName; }
+        }
+        public string GetFirstName
+        {
+            get { return _firstName; }
+        }
+        public string GetYear
+        {
+            get { return _year; }
+        }
+        public int GetID
+        {
+            get { return _id; }
+        }
+        public string GetPracticeType
+        {
+            get { return _practiceType; }
+        }
+        public string GetCompanyName
+        {
+            get { return _companyName; }
+        }
+
+ 
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Compare(object x, object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+    }
+
+    public class StudentList : ICloneable, IComparable, IComparer
+    {
+        private List<StudentTeacher> _students;
+        private int _currentRecordCount;
+
+        public int GetCurrentRecordCount
+        {
+            get { return _currentRecordCount; }
+        }
+
+        public List<StudentTeacher> GetStudents
+        {
+            get { return _students; }
+        }
+
+        public StudentList()
+        {
+            _students = new List<StudentTeacher>();
+            _currentRecordCount = 0;
+        }
+        public void AddRecord(StudentTeacher stData)
+        {
+            try
+            {
+                _students.Add(stData);
+                Console.WriteLine("Record's been added");
+                _currentRecordCount++;
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine($"IndexOutOfRangeException: {ex}");
+            }
+        }
+        public void ChangeRecord(int index, StudentTeacher stData)
+        {
+            if (index > _currentRecordCount - 1)
+                throw new IndexOutOfRangeException("The number of contained items less than the item's index!");
+            else
+            {
+                try
+                {
+                    _students[index] = stData;
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                    Console.WriteLine($"IndexOutOfRangeException: {ex}");
+                }
+            }
+        }
+        public void DeleteRecord(int index)
+        {
+            if (index > _currentRecordCount - 1)
+                throw new IndexOutOfRangeException("The number of contained items less than the item's index!");
+            try
+            {
+                _students.RemoveAt(index);
+                _currentRecordCount--;
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine($"IndexOutOfRangeException: {ex}");
+            }
+        }
+        public void WriteItemInfo(int index)
+        {
+            if (index > _currentRecordCount - 1)
+                throw new IndexOutOfRangeException("The number of contained items less than the item's index!");
+            Console.WriteLine("{0} {1} {2} {3} {4} {5}",
+                _students[index].GetSecondName,
+                _students[index].GetFirstName,
+                _students[index].GetYear,
+                _students[index].GetID,
+                _students[index].GetCompanyName,
+                _students[index].GetPracticeType
+                );
+        }
+        public void WriteListInfo()
+        {
+            try
+            {
+                for (int i = 0; i < _currentRecordCount; i++)
+                {
+                    Console.WriteLine("{0} {1} {2} {3} {4} {5}",
+                    _students[i].GetSecondName,
+                    _students[i].GetFirstName,
+                    _students[i].GetYear,
+                    _students[i].GetID,
+                    _students[i].GetCompanyName,
+                    _students[i].GetPracticeType
+                    );
+                }
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine($"IndexOutOfRangeException: {ex}");
+            }
+        }
+
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Compare(object x, object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object Clone()
+        {
+            List<StudentTeacher> ls = new List<StudentTeacher>();
+            for (int i = 0; i < _currentRecordCount; i++)
+            {
+                ls[i]._secondName = _students[i]._secondName;
+                ls[i]._firstName = _students[i]._firstName;
+                ls[i]._id = _students[i]._id;
+                ls[i]._year = _students[i]._year;
+                ls[i]._practiceType = _students[i]._practiceType;
+                ls[i]._companyName = _students[i]._companyName;
+            }
+            StudentList sl = new StudentList();
+            sl._students = ls;
+            sl._currentRecordCount = _currentRecordCount;
+            return sl;
+        }
+    }
+
+
+    class Program
+    {
+        static StudentTeacher EnterDataViaConsole(StudentTeacher st)
+        {
+            try
+            {
+                Console.Write("Second name: ");
+                st.SetSecondName(Console.ReadLine());
+                Console.Write("First name: ");
+                st.SetFirstName(Console.ReadLine());
+                Console.Write("Year: ");
+                st.SetYear(Console.ReadLine());
+                Console.Write("ID: ");
+                st.SetID(Convert.ToInt32(Console.ReadLine()));
+                Console.Write("Company name: ");
+                st.SetCompanyName(Console.ReadLine());
+                Console.Write("Practice type: ");
+                st.SetPracticeType(Console.ReadLine());
+                Console.Clear();
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine($"FormatException: {ex}");
+            }
+            return st;
+        }
+        static void Main(string[] args)
+        {
+            StudentList slInstance = new StudentList();
+            ConsoleKeyInfo key = new ConsoleKeyInfo();
+            int index;
+            try
+            {
+                while (true)
+                {
+                    Console.WriteLine("Enter \"A\" to add a new record\n" +
+                        "Enter \"C\" to change a record\n" +
+                        "Enter \"D\" to delete a record\n" +
+                        "Enter \"I\" to show a list information\n" +
+                        "Enter \"Q\" to quit the programme...");
+                    key = Console.ReadKey();
+                    Console.Clear();
+                    if (key.Key == ConsoleKey.A)
+                    {
+                        slInstance.AddRecord(EnterDataViaConsole(new StudentTeacher()));
+                    }
+                    else if (key.Key == ConsoleKey.C)
+                    {
+                        Console.Write("Enter an index of record to be changed: ");
+                        index = Convert.ToInt32(Console.ReadLine());
+                        slInstance.ChangeRecord(index, EnterDataViaConsole(new StudentTeacher()));
+                    }
+                    else if (key.Key == ConsoleKey.D)
+                    {
+
+                        if (slInstance.GetCurrentRecordCount != 0)
+                        {
+                            Console.Write("Enter an index of record to be deleted: ");
+                            index = Convert.ToInt32(Console.ReadLine());
+                            slInstance.DeleteRecord(index);
+                        }
+                        else { Console.WriteLine("List contains ZERO items..."); }
+                    }
+                    else if (key.Key == ConsoleKey.I)
+                    {
+                        slInstance.WriteListInfo();
+                        Console.WriteLine("Tap any button to proceed...");
+                        Console.ReadKey();
+                        Console.Clear();
+                    }
+                    else if (key.Key == ConsoleKey.Q)
+                    {
+                        Console.WriteLine("Quit...");
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex}");
+            }
+        }
+    }
+}
