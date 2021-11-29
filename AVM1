@@ -1,0 +1,94 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using ZedGraph;
+
+namespace AVM1
+{
+    public partial class Form1 : Form
+    {
+        double[] x = new double[] { 5, 4, 6, 7, 8, 12 };
+        double[] y = new double[] { 2, 4, 13, 20, 53, 76 };
+        public Form1()
+        {
+            InitializeComponent();
+            DrawGraph(x, y);
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        double F(double x) //исходная функция
+        {
+            return x * x;
+        }
+
+        double L1(double x0, double[] x, double[] y) //интерполяционный полином
+        {
+            double Polinom = 0;
+            for (int i = 0; i < x.Length; i++)
+            {
+                double p = 1;
+                for (int j = 0; j < x.Length; j++)
+                    if (i != j)
+                    {
+                        p = p * (x0 - x[j]) / (x[i] - x[j]);
+                    }
+
+                Polinom += y[i] * p;
+            }
+            return Polinom;
+        }
+
+        public void DrawGraph(double[] x, double[] y)
+        {
+            // Получим панель для рисования
+            GraphPane pane = zedGraph.GraphPane;
+            pane.CurveList.Clear();
+
+            // Создадим список точек
+            PointPairList list_1 = new PointPairList();
+            PointPairList list_2 = new PointPairList();
+            // Заполняем список точек
+            for (int i = 0; i < x.Length; i++)
+            {
+                list_1.Add(x[i], y[i]);
+            }
+
+
+            // интерполирем несколько точек между узлами
+            int n = 10;
+            for (int i = 0; i < x.Length - 1; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    var local = x[i] + j * (x[i + 1] - x[i]) / n;
+                    list_2.Add(local, L1(local, x, y));
+                }
+            }
+            list_2.Add(x[x.Length - 1], y[y.Length - 1]);
+            LineItem myCurve1 = pane.AddCurve("Исходная функция", list_1, Color.Black, SymbolType.Diamond);
+            myCurve1.Line.IsVisible = false;
+            LineItem myCurve2 = pane.AddCurve("Интерполяционный полином", list_2, Color.Red, SymbolType.None);
+            // задаем точный минимум и максимум по Ox
+            pane.YAxis.Scale.MinAuto = false;
+            pane.XAxis.Scale.Min = x[0];
+            pane.YAxis.Scale.MaxAuto = false;
+            pane.XAxis.Scale.Max = x[x.Length - 1];
+
+            // по Oy - автоматически
+            pane.YAxis.Scale.MinAuto = true;
+            pane.YAxis.Scale.MaxAuto = true;
+
+            pane.AxisChange();
+            zedGraph.Invalidate();
+        }
+    }
+}
