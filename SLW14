@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace WindowsFormsApp1
 {
-    class BinaryTreeNode<TNode> : IComparable<TNode> where TNode : IComparable
+    public class BinaryTreeNode<TNode> : IComparable<TNode> where TNode : IComparable
     {
 
         public BinaryTreeNode<TNode> _left { get; set; }
         public BinaryTreeNode<TNode> _right { get; set; }
+        public int _level { get; set; }
         public TNode _value { get; private set; }
 
         public BinaryTreeNode(TNode value)
@@ -31,16 +32,14 @@ namespace WindowsFormsApp1
         private BinaryTreeNode<T> _head;
         private int _count;
 
+        public BinaryTreeNode<T> GetHead { get => _head; }
+        
         public void Add(T value)
         {
             if (_head == null)
-            {
                 _head = new BinaryTreeNode<T>(value);
-            }
             else
-            {
                 AddTo(_head, value);
-            }
 
             _count++;
         }
@@ -49,26 +48,28 @@ namespace WindowsFormsApp1
             if (value.CompareTo(node._value) < 0)
             {
                 if (node._left == null)
-                {
                     node._left = new BinaryTreeNode<T>(value);
-                }
+
                 else
-                {
                     AddTo(node._left, value);
-                }
             }
             else
             {
                 if (node._right == null)
-                {
                     node._right = new BinaryTreeNode<T>(value);
-                }
                 else
-                {
                     AddTo(node._right, value);
-                }
             }
         }
 
+        public void Print(BinaryTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                Print(node._left);
+                Print(node._right);
+                Console.WriteLine(node._value);
+            }
+        }
     }
 }
