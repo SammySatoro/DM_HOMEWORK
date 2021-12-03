@@ -1,0 +1,74 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WindowsFormsApp1
+{
+    class BinaryTreeNode<TNode> : IComparable<TNode> where TNode : IComparable
+    {
+
+        public BinaryTreeNode<TNode> _left { get; set; }
+        public BinaryTreeNode<TNode> _right { get; set; }
+        public TNode _value { get; private set; }
+
+        public BinaryTreeNode(TNode value)
+        {
+            _value = value;
+            _left = _right = null;
+        }
+
+        public int CompareTo(TNode other)
+        {
+            return _value.CompareTo(other);
+        }
+    }
+
+    public class BinaryTree<T> where T : IComparable
+    {
+        private BinaryTreeNode<T> _head;
+        private int _count;
+
+        public void Add(T value)
+        {
+            if (_head == null)
+            {
+                _head = new BinaryTreeNode<T>(value);
+            }
+            else
+            {
+                AddTo(_head, value);
+            }
+
+            _count++;
+        }
+        private void AddTo(BinaryTreeNode<T> node, T value)
+        {
+            if (value.CompareTo(node._value) < 0)
+            {
+                if (node._left == null)
+                {
+                    node._left = new BinaryTreeNode<T>(value);
+                }
+                else
+                {
+                    AddTo(node._left, value);
+                }
+            }
+            else
+            {
+                if (node._right == null)
+                {
+                    node._right = new BinaryTreeNode<T>(value);
+                }
+                else
+                {
+                    AddTo(node._right, value);
+                }
+            }
+        }
+
+    }
+}
