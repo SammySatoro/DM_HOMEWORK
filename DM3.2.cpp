@@ -21,7 +21,6 @@ bool IsRepeating(int a1, int a2, int a3, int a4, int a5, int a6)
 	word += to_string(a4);
 	word += to_string(a5);
 	word += to_string(a6);
-	cout << endl << word;
 	for (int i = 0; i < word.length(); i++)
 	{
 		flag = 0;
