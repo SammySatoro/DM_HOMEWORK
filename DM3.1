@@ -7,8 +7,6 @@ using namespace std;
 
 ofstream outputFile("D:\\DMTESTFILE\\test.txt");
 
-// - Дано множество {a,b,c,d,e,f}. Построить все слова длины 5, в которых ровно одна
-// буква повторяется 2 раза, остальные буквы не повторяются. Вывод в файл.
 // - Дано множество {a,b,c,d,e,f}. Построить все слова длины 6, в которых ровно 2
 // буквы повторяются 2 раза, остальные буквы не повторяются. Вывод в файл.
 
@@ -20,18 +18,12 @@ void PermWithRep(string str, int limit, int n, int k)
 
 		for (int i = 0; i < k; i++)
 		{
-			if (str[i] == '1')
-				ch1++;
-			if (str[i] == '2')
-				ch2++;;
-			if (str[i] == '3')
-				ch3++;
-			if (str[i] == '4')
-				ch4++;
-			if (str[i] == '5')
-				ch5++;
-			if (str[i] == '6')
-				ch6++;
+			if (str[i] == '1') ch1++;				
+			if (str[i] == '2') ch2++;;
+			if (str[i] == '3') ch3++;
+			if (str[i] == '4') ch4++;
+			if (str[i] == '5') ch5++;
+			if (str[i] == '6') ch6++;
 		}
 		if ((ch1 <= 1 && ch2 <= 1 && ch3 <= 1 && ch4 <= 1 && ch5 == 2 && ch6 <= 1) ||
 			(ch1 <= 1 && ch2 <= 1 && ch3 <= 1 && ch4 <= 1 && ch5 <= 1 && ch6 == 2) ||
@@ -41,13 +33,13 @@ void PermWithRep(string str, int limit, int n, int k)
 			(ch1 == 2 && ch2 <= 1 && ch3 <= 1 && ch4 <= 1 && ch5 <= 1 && ch6 <= 1))
 		{
 			for (int i = 0; i < k; i++)
-			{
-				if (str[i] == '0') str[i] = 'a';					
-				if (str[i] == '1') str[i] = 'b';					
-				if (str[i] == '2') str[i] = 'c';					
-				if (str[i] == '3') str[i] = 'd';					
-				if (str[i] == '4') str[i] = 'e';					
-				if (str[i] == '5') str[i] = 'f';					 
+			{				
+				if (str[i] == '1') str[i] = 'a';					
+				if (str[i] == '2') str[i] = 'b';					
+				if (str[i] == '3') str[i] = 'c';					
+				if (str[i] == '4') str[i] = 'd';					
+				if (str[i] == '5') str[i] = 'e';
+				if (str[i] == '6') str[i] = 'f';
 			}
 			outputFile << str << endl;
 		}
@@ -62,12 +54,10 @@ void PermWithRep(string str, int limit, int n, int k)
 }
 int main()
 {
-	int n;
-	int k;
-	cout << "Enter alphabet number: ";
-	cin >> n;
-	cout << "Enter the word's length: ";
-	cin >> k;
-	PermWithRep("", 1, n, k);
-	cout << "FINISHED!";
+	int alphabetNumber = 6;
+	int wordLength = 6;
+	cout << "Enter alphabet number: " << alphabetNumber << endl;
+	cout << "Enter the word's length: " << wordLength << endl;
+	PermWithRep("", 1, alphabetNumber, wordLength);
+	cout << "FINISHED! Check out the result file!";
 }
