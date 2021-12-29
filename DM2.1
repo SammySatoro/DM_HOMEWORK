@@ -50,12 +50,10 @@ void PermWithRep(string str, int limit, int n, int k)
 }
 int main()
 {
-	int n;
-	int k;
-	cout << "Enter alphabet number: \n";
-	cin >> n;
-	cout << "Enter the word's length: ";
-	cin >> k;
-	PermWithRep("", 1, n, k);
-	cout << "FINISHED!";
+    int alphabetNumber = 6;
+    int wordLength = 5;
+    cout << "Enter alphabet number: " << alphabetNumber << endl;
+    cout << "Enter the word's length: " << wordLength << endl;
+    PermWithRep("", 1, alphabetNumber, wordLength);
+    cout << "FINISHED! Check out the result file!";
 }
