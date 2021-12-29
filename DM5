@@ -1,0 +1,87 @@
+﻿#include <iostream>
+#include <sstream>
+#include <fstream>
+
+using namespace std;
+
+ofstream f("C:\\Users\\dzb.txt");
+
+void Place(string str, int ur, int n, int k,int kk,int m)
+{
+    int p = 0, t = 0, y = 0, o = 0, u = 0, yy = 0 ,x=0,z=0,rt=0,pp=0,trt=-1;
+    if (ur > k)
+    {
+
+        for (int i = 0; i < k; i++)
+        {
+            if (str[i] == '0')
+                p++;
+            if (str[i] == '1')
+                t++;;
+            if (str[i] == '2')
+                y++;
+            if (str[i] == '3')
+                o++;
+            if (str[i] == '4')
+                u++;
+            if (str[i] == '5')
+                yy++;
+            if (str[i] == '6')
+                x++;
+            if (str[i] == '7')
+                z++;
+            if (str[i] == '8')
+                rt++;
+            if (str[i] == '9')
+                pp++;
+        }
+        if (str[k-2] == '0' || str[k-2] == '4' || str[k-2] == '8' || str[k - 1] == '0' || str[k - 1] == '4' || str[k - 1] == '8')
+            trt = 1;
+        if(trt==-1&&yy==kk&&y==m)
+        {
+            for (int i = 0; i < k; i++)
+            {
+                if (str[i] == '0')
+                    str[i] = 'a';
+                if (str[i] == '1')
+                    str[i] = 'b';
+                if (str[i] == '2')
+                    str[i] = 'c';
+                if (str[i] == '3')
+                    str[i] = 'd';
+                if (str[i] == '4')
+                    str[i] = 'e';
+                if (str[i] == '5')
+                    str[i] = 'f';
+                if (str[i] == '6')
+                    str[i] = 'g';
+                if (str[i] == '7')
+                    str[i] = 'h';
+                if (str[i] == '8')
+                    str[i] = 'j';
+                if (str[i] == '9')
+                    str[i] = 'k';
+            }
+            f << str << endl;
+        }
+    }
+    else
+        for (int i = 0; i < n; i++)
+        {
+            ostringstream os;
+            os << i ;
+            Place(str + os.str(), ur + 1, n, k,kk,m);
+        }
+}
+int main()
+{
+
+    int n;
+    int m,k;
+    cout << "Enter n k m: " << endl;
+    cin >> n >>k>> m;
+    Razm("", 1, 10, n,k,m);
+
+    return 0;
+}
+
