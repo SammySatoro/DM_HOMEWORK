@@ -7,9 +7,9 @@ using namespace std;
 
 ofstream outputFile("D:\\DMTESTFILE\\test.txt");
 
-// - Дано множество {a,b,c,d,e,f}. Построить все слова длины 6, в которых ровно 2
-// буквы повторяются 2 раза, остальные буквы не повторяются. Вывод в файл.
-// 10800 слов всего 
+// - Дано множество {a,b,c,d,e,f}. Построить все слова длины 5, в которых ровно одна
+// буква повторяется 2 раза, остальные буквы не повторяются. Вывод в файл.
+// 3600 слов всего
 
 void PermWithRep(string str, int limit, int n, int k)
 {
@@ -56,7 +56,7 @@ void PermWithRep(string str, int limit, int n, int k)
 int main()
 {
 	int alphabetNumber = 6;
-	int wordLength = 6;
+	int wordLength = 5;
 	cout << "Enter alphabet number: " << alphabetNumber << endl;
 	cout << "Enter the word's length: " << wordLength << endl;
 	PermWithRep("", 1, alphabetNumber, wordLength);
