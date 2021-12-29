@@ -1,0 +1,67 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+ofstream outputFile("D:\\DMTESTFILE\\test.txt");
+
+void ChristmasSwap(int* a, int i, int j) //Usual swap, actually...
+{
+    int s = a[i];
+    a[i] = a[j];
+    a[j] = s;
+}
+bool NextSet(int* a, int n)
+{
+    int j = n - 2;
+    while (j != -1 && a[j] >= a[j + 1]) j--;
+    if (j == -1) return false;        
+    int k = n - 1;
+    while (a[j] >= a[k]) k--;
+    ChristmasSwap(a, j, k);
+    int l = j + 1, r = n - 1;
+    while (l < r)
+        ChristmasSwap(a, l++, r--);
+    return true;
+}
+void WriteInFile(int* a, int n)
+{
+    static int num = 1;
+    outputFile.width(3);
+    outputFile << num++ << ": ";
+    for (int i = 0; i <= n; i++)
+    {
+        if (a[i] == 0) outputFile << "a";            
+        if (a[i] == 1) outputFile << "b";           
+        if (a[i] == 2) outputFile << "c";           
+        if (a[i] == 3) outputFile << "d";             
+        if (a[i] == 4) outputFile << "e";            
+        if (a[i] == 5) outputFile << "f";           
+    }
+    outputFile << endl;
+}
+int main()
+{
+    int n, * a;
+    cout << "Alphabet = {a, b, c, d, e, f}";
+    cout << "Enter the word's length: ";
+    cin >> n;
+    a = new int[n];
+    for (int i = 0; i < n; i++)
+    {
+        if (i <= 1) {
+            if (i == 0) a[i] = 0;                 
+            if (i == 1) a[i] = 0;                 
+            if (i == 2) a[i] = 1;                
+            if (i == 3) a[i] = 1;                
+            if (i == 4) a[i] = 2;
+            if (i == 5) a[i] = 2;
+                
+        }
+        else if (i > 1) 
+            a[i] = i - 1;                           
+    }
+    WriteInFile(a, n);
+    while (NextSet(a, n))
+        WriteInFile(a, n);
+}
