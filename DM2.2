@@ -1,67 +1,61 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 
 using namespace std;
 
 ofstream outputFile("D:\\DMTESTFILE\\test.txt");
+// - Дано множество {a,b,c,d,e,f}. Построить все слова длины 6, в которых ровно 2
+// буквы повторяются 2 раза, остальные буквы не повторяются. Вывод в файл.
+// Всего 600 слов
+void PermWithRep(string str, int limit, int n, int k)
+{
+	int ch1 = 0, ch2 = 0, ch3 = 0, ch4 = 0, ch5 = 0, ch6 = 0;
+	if (limit > k)
+	{
 
-void ChristmasSwap(int* a, int i, int j) //Usual swap, actually...
-{
-    int s = a[i];
-    a[i] = a[j];
-    a[j] = s;
-}
-bool NextSet(int* a, int n)
-{
-    int j = n - 2;
-    while (j != -1 && a[j] >= a[j + 1]) j--;
-    if (j == -1) return false;        
-    int k = n - 1;
-    while (a[j] >= a[k]) k--;
-    ChristmasSwap(a, j, k);
-    int l = j + 1, r = n - 1;
-    while (l < r)
-        ChristmasSwap(a, l++, r--);
-    return true;
-}
-void WriteInFile(int* a, int n)
-{
-    static int num = 1;
-    outputFile.width(3);
-    outputFile << num++ << ": ";
-    for (int i = 0; i <= n; i++)
-    {
-        if (a[i] == 0) outputFile << "a";            
-        if (a[i] == 1) outputFile << "b";           
-        if (a[i] == 2) outputFile << "c";           
-        if (a[i] == 3) outputFile << "d";             
-        if (a[i] == 4) outputFile << "e";            
-        if (a[i] == 5) outputFile << "f";           
-    }
-    outputFile << endl;
+		for (int i = 0; i < k; i++)
+		{
+			if (str[i] == '1') ch1++;				
+			if (str[i] == '2') ch2++;;				
+			if (str[i] == '3') ch3++;				 
+			if (str[i] == '4') ch4++;				
+			if (str[i] == '5') ch5++;				
+			if (str[i] == '6') ch6++;
+				
+		}
+		if (ch1 == 2 && ch2 <= 1 && ch3 <= 1 && ch4 <= 1 && ch5 <= 1 && ch6 <= 1)
+		{
+			for (int i = 0; i < k; i++)
+			{
+				if (str[i] == '1') str[i] = 'a';					
+				if (str[i] == '2') str[i] = 'b';					 
+				if (str[i] == '3') str[i] = 'c';					
+				if (str[i] == '4') str[i] = 'd';
+				if (str[i] == '5') str[i] = 'e';
+				if (str[i] == '6') str[i] = 'f';
+
+			}
+			outputFile << str << endl;
+		}
+	}
+	else
+		for (int i = 0; i < n; i++)
+		{
+			ostringstream indexIncrementer;
+			indexIncrementer << i + 1;
+
+			PermWithRep(str + indexIncrementer.str(), limit + 1, n, k);
+		}
 }
 int main()
 {
-    int n, * a;
-    cout << "Alphabet = {a, b, c, d, e, f} \n";
-    cout << "Enter the word's length: ";
-    cin >> n;
-    a = new int[n];
-    for (int i = 0; i < n; i++)
-    {
-        if (i <= 1) {
-            if (i == 0) a[i] = 0;                 
-            if (i == 1) a[i] = 0;                 
-            if (i == 2) a[i] = 1;                
-            if (i == 3) a[i] = 1;                
-            if (i == 4) a[i] = 2;
-            if (i == 5) a[i] = 2;
-                
-        }
-        else if (i > 1) 
-            a[i] = i - 1;                           
-    }
-    WriteInFile(a, n);
-    while (NextSet(a, n))
-        WriteInFile(a, n);
+	int n;
+	int k;
+	cout << "Enter alphabet number: \n";
+	cin >> n;
+	cout << "Enter the word's length: ";
+	cin >> k;
+	PermWithRep("", 1, n, k);
+	cout << "FINISHED!";
 }
