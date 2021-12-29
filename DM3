@@ -1,0 +1,71 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <fstream>
+
+using namespace std;
+
+ofstream f("C:\\Users\\dz.txt");
+
+void Place(string str, int ur, int n, int k)
+{
+    int p = 0, t = 0, y = 0, o = 0, u = 0, yy = 0, x = 0;
+    if (ur > k)
+    {
+
+        for (int i = 0; i < k; i++)
+        {
+            if (str[i] == '1')
+                p++;
+            if (str[i] == '2')
+                t++;;
+            if (str[i] == '3')
+                y++;
+            if (str[i] == '4')
+                o++;
+            if (str[i] == '5')
+                u++;
+            if (str[i] == '6')
+                yy++;
+        }
+        if( (p ==1&&t==1&&y==1&&o==1&&u>=2&&yy>=2)||
+            (p == 1 && t == 1 && y == 1 && o >= 2 && u >= 2 && yy ==1) ||
+            (p == 1 && t == 1 && y >=2 && o == 1 && u >= 2 && yy ==1) ||
+            (p == 1 && t >= 2 && y == 1 && o == 1 && u >= 2 && yy==1) ||
+            (p>=2 && t == 1 && y == 1 && o == 1 && u >= 2 && yy ==1))
+        {
+            for (int i = 0; i < k; i++)
+            {
+                if (str[i] == '0')
+                    str[i] = 'a';
+                if (str[i] == '1')
+                    str[i] = 'b';
+                if (str[i] == '2')
+                    str[i] = 'c';
+                if (str[i] == '3')
+                    str[i] = 'd';
+                if (str[i] == '4')
+                    str[i] = 'e';
+                if (str[i] == '5')
+                    str[i] = 'f';
+            }
+            f << str << endl;
+        }
+    }
+    else
+        for (int i = 0; i < n; i++)
+        {
+            ostringstream os;
+            os << i+1 ;
+
+            Place(str + os.str(), ur + 1, n, k);
+        }
+}
+int main()
+{
+    int n, k, tt;
+    cout << "Enter n and k: " << endl;
+    cin >> n >> k;
+    Place("", 1, n, k);
+    return 0;
+}
