@@ -56,7 +56,6 @@ int main()
     cin >> n;
     cout << "Enter the word's length: ";
     cin >> k;
-    cout << "Permutation from " << n << " to " << k << ": " << endl;
     PermWithRep("", 1, n, k);
 }
 
